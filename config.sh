@@ -29,3 +29,5 @@ echo "root:$3" | chpasswd
 sed -i "s/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g" /etc/sudoers
 
 systemctl enable NetworkManager
+
+sed -i "s/^#Color/Color/; /#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
