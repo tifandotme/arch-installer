@@ -18,10 +18,14 @@ tee /etc/hosts <<EOF > /dev/null
 EOF
 
 # install grub
-grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bootloader-id=GRUB > /dev/null
-grub-mkconfig --output=/efi/grub/grub.cfg > /dev/null
+grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bootloader-id=GRUB > /dev/null 2>&1
+grub-mkconfig --output=/efi/grub/grub.cfg > /dev/null 2>&1
 
 # create a new user
 useradd -m -G wheel -s /bin/bash "$4"
 echo "$4:$5" | chpasswd
 echo "root:$3" | chpasswd
+
+sed -i "s/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g" /etc/sudoers
+
+systemctl enable NetworkManager
