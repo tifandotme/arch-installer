@@ -14,32 +14,32 @@ userPassword="2"
 rootPassword="1"
 
 # / and swap partitions size in GiB, remainder will be assigned to /home partition
-rootSize="5"
-swapSize="1"
+root="5"
+swap="1"
 
 mirrorlist() {
     echo "Fetching mirrorlist"
 
-    pacman -Syy --noconfirm pacman-contrib > /dev/null 2>&1
+    curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
 
     # fetch and ranks a live mirrorlist
     curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&ip_version=4" | \
     sed -e "s/^#Server/Server/g; /^#/d" | \
-    rankmirrors -n 6 - > /etc/pacman.d/mirrorlist
+    ./rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
 }
 
 partition() {
     echo "Partitioning"
 
     # create GPT partitions
-    rootSize=$((rootSize * 1024 + 261))
-    swapSize=$((swapSize * 1024 + root))
+    root=$((root * 1024 + 261))
+    swap=$((swap * 1024 + root))
     parted -s /dev/sda mklabel gpt \
         mkpart efi fat32 1MiB 261MiB \
-        mkpart root ext4 261MiB "$rootSize"MiB \
-        mkpart swap linux-swap "$rootSize"MiB "$swapSize"MiB \
-        mkpart home ext4 "$swapSize"MiB 100% \
-        set 1 esp on > /dev/null 2>&1
+        mkpart root ext4 261MiB "$root"MiB \
+        mkpart swap linux-swap "$root"MiB "$swap"MiB \
+        mkpart home ext4 "$swap"MiB 100% \
+        set 1 esp on
 
     # formatting
     mkfs.fat -F32 /dev/sda1 > /dev/null 2>&1
