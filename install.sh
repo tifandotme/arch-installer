@@ -28,6 +28,7 @@ mirrorlist() {
     echo "Fetching mirrorlist"
 
     curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
+    chmod +x rankmirrors.sh
 
     # fetch and ranks a live mirrorlist
     curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&ip_version=4" | \
