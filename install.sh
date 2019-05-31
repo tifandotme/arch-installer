@@ -1,5 +1,9 @@
 #!/bin/sh
 # Arch Linux installation script for UEFI systems
+#
+# To-do:
+# Making this script runable on both UEFI and BIOS systems
+# Add a condition to install microcode according to processor manufacturer
 
 # PARAMETERS
 
@@ -16,6 +20,9 @@ rootPassword="1"
 # / and swap partitions size in GiB, remainder will be assigned to /home partition
 root="5"
 swap="1"
+
+packages="base base-devel grub efibootmgr intel-ucode networkmanager \
+openssh"
 
 mirrorlist() {
     echo "Fetching mirrorlist"
@@ -60,9 +67,13 @@ partition() {
 install() {
     echo "Installing packages"
 
-    pacstrap /mnt base base-devel \
-        networkmanager \
-        grub efibootmgr > /dev/null 2>&1
+    total=$(echo "$packages" | wc -w)
+    for pac in $packages; do
+        n=$((n+1))
+        echo "$pac ($n of $total)"
+
+        pacstrap /mnt "$pac" > /dev/null 2>&1
+    done
 
     genfstab -U /mnt >> /mnt/etc/fstab
 }
