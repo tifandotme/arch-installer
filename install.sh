@@ -71,7 +71,7 @@ install() {
     total=$(echo "$packages" | wc -w)
     for pac in $packages; do
         n=$((n+1))
-        echo "$pac ($n of $total)"
+        echo "  $pac ($n of $total)"
 
         pacstrap /mnt "$pac" > /dev/null 2>&1
     done
