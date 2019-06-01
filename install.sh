@@ -21,9 +21,6 @@ rootPassword="1"
 root="5"
 swap="1"
 
-packages="base base-devel grub efibootmgr intel-ucode networkmanager \
-openssh"
-
 mirrorlist() {
     echo "Fetching mirrorlist"
 
@@ -67,6 +64,14 @@ partition() {
 
 install() {
     echo "Installing packages"
+
+    packages="base base-devel grub efibootmgr intel-ucode linux-headers networkmanager openssh \
+        xorg-server xorg-xinit \
+        mesa virtualbox-guest-utils virtualbox-guest-modules-arch"
+        # xf86-video-intel libgl mesa"
+
+        # packages to consider
+        # xf86-input-libinput dosfstools mtools os-prober network-manager-applet wireless_tools wpa_supplicant dialog
 
     total=$(echo "$packages" | wc -w)
     for pac in $packages; do
