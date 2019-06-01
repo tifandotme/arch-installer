@@ -1,36 +1,41 @@
 #!/bin/sh
 # Arch Linux installation script for UEFI systems
-#
-# To-do:
-# Making this script runable on both UEFI and BIOS systems
-# Add a condition to install microcode according to processor manufacturer
 
 # PARAMETERS
-
-# computer's info
-country="SG"        # country where we will be fetching our live mirrorlist from
+# current timezone
 timezone="Asia/Jakarta"
+
+# country where we will be fetching our live mirrorlist from
+# list: https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/countries.txt
+country="SG"
+
+# computer's name
 hostname="eddies"
 
-# users login info
-username="anvity"
-userPassword="2"
+# superuser
 rootPassword="1"
 
-# / and swap partitions size in GiB, remainder will be assigned to /home partition
+# unprivileged user
+username="anvity"
+userPassword="2"
+
+# root and swap partitions size in GiB, the remainder will be assigned to home partition
 root="5"
 swap="1"
+
+# if running on a virtual machine, VM video driver will be installed, or else
+# it will install an intel video driver
+isVM="true"
 
 mirrorlist() {
     echo "Fetching mirrorlist"
 
     curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
-    chmod +x rankmirrors.sh
 
     # fetch and ranks a live mirrorlist
     curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&ip_version=4" | \
     sed -e "s/^#Server/Server/g; /^#/d" | \
-    ./rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
+    bash rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
 }
 
 partition() {
@@ -65,13 +70,22 @@ partition() {
 install() {
     echo "Installing packages"
 
-    packages="base base-devel grub efibootmgr intel-ucode linux-headers networkmanager openssh \
-        xorg-server xorg-xinit \
-        mesa virtualbox-guest-utils virtualbox-guest-modules-arch"
-        # xf86-video-intel libgl mesa"
+    # base packages
+    packages="base base-devel grub efibootmgr intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit"
 
-        # packages to consider
-        # xf86-input-libinput dosfstools mtools os-prober network-manager-applet wireless_tools wpa_supplicant dialog
+    if ( $isVM ); then
+        # video drivers for VM
+        packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils libglvnd mesa"
+    else
+        # video drivers for intel
+        packages="${packages} xf86-video-intel libglvnd mesa"
+    fi
+
+    # DE/WM
+    packages="${packages} openbox obmenu obconf nitrogen"
+
+    # packages to consider
+    # network-manager-applet wireless_tools wpa_supplicant dialog
 
     total=$(echo "$packages" | wc -w)
     for pac in $packages; do
