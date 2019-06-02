@@ -1,6 +1,9 @@
 #!/bin/sh
 # Arch Linux installation script
 
+# curl https://tinyurl.com/rifqid > in
+# bash in
+
 # PARAMETERS
 
 # current timezone
@@ -106,7 +109,8 @@ install() {
 	fi
 
 	# general packages
-	packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode git"
+	packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode \
+		git htop"
 
 	# packages to consider
 	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet wireless_tools wpa_supplicant dialog

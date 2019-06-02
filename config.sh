@@ -37,7 +37,7 @@ sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL= NOPASSWD: ALL, NOPASSWD:
 # import dotfiles
 git clone -q https://github.com/ifananvity/dotfiles.git > /dev/null 2>&1
 for dot in $(ls dotfiles/ -a); do
-	[ ! $dot = ".." ] && [ ! $dot = "." ] && [ ! $dot = ".git" ] && cp -r dotfiles/$dot /home/$4/
+	[ ! $dot = ".." ] && [ ! $dot = "." ] && [ ! $dot = ".git" ] && cp -rf dotfiles/$dot /home/$4/
 done && rm -rf dotfiles/
 
 # colorize output
