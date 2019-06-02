@@ -32,7 +32,7 @@ fi
 useradd -m -g users -G wheel -s /bin/bash "$4"
 echo "$4:$5" | chpasswd
 echo "root:$3" | chpasswd
-sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: \/usr\/bin\/halt,\/usr\/bin\/poweroff,\/usr\/bin\/reboot,\/usr\/bin\/pacman -Syu,\/usr\/bin\/pacman -Syyu,\/usr\/bin\/pacman -Sy,\/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
+sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL= NOPASSWD: ALL, NOPASSWD: \/usr\/bin\/halt, \/usr\/bin\/poweroff, \/usr\/bin\/reboot, \/usr\/bin\/pacman -Syu, \/usr\/bin\/pacman -Syyu, \/usr\/bin\/pacman -Sy, \/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
 
 # import dotfiles
 curl -s https://raw.githubusercontent.com/ifananvity/dotfiles/master/.bashrc -o /home/$4/.bashrc
