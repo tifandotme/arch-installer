@@ -35,8 +35,9 @@ echo "root:$3" | chpasswd
 sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL= NOPASSWD: ALL, NOPASSWD: \/usr\/bin\/halt, \/usr\/bin\/poweroff, \/usr\/bin\/reboot, \/usr\/bin\/pacman -Syu, \/usr\/bin\/pacman -Syyu, \/usr\/bin\/pacman -Sy, \/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
 
 # import dotfiles
-curl -s https://raw.githubusercontent.com/ifananvity/dotfiles/master/.bashrc -o /home/$4/.bashrc
-curl -s https://raw.githubusercontent.com/ifananvity/dotfiles/master/.xinitrc -o /home/$4/.xinitrc
+git clone -q https://github.com/ifananvity/dotfiles.git &&
+mv -f dotfiles/.* $HOME
+rm -rf dotfiles
 
 # colorize output
 sed -i "s/^#Color/Color/g; /#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
