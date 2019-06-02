@@ -71,7 +71,7 @@ partition() {
         parted -s /dev/sda mklabel msdos \
             mkpart primary ext4 1MiB "$root"MiB \
             mkpart primary linux-swap "$root"MiB "$swap"MiB \
-            mkpart home ext4 "$swap"MiB 100% \
+            mkpart primary ext4 "$swap"MiB 100% \
             set 1 boot on
 
         # formatting
