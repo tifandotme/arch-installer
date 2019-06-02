@@ -35,9 +35,10 @@ echo "root:$3" | chpasswd
 sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL= NOPASSWD: ALL, NOPASSWD: \/usr\/bin\/halt, \/usr\/bin\/poweroff, \/usr\/bin\/reboot, \/usr\/bin\/pacman -Syu, \/usr\/bin\/pacman -Syyu, \/usr\/bin\/pacman -Sy, \/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
 
 # import dotfiles
+find /home/$4/ -mindepth 1 -delete
 git clone -q https://github.com/ifananvity/dotfiles.git > /dev/null 2>&1
 for dot in $(ls dotfiles/ -a); do
-	[ ! $dot = ".." ] && [ ! $dot = "." ] && [ ! $dot = ".git" ] && cp -rf dotfiles/$dot /home/$4/
+	[ ! $dot = ".." ] && [ ! $dot = "." ] && cp -rf dotfiles/$dot /home/$4/
 done && rm -rf dotfiles/
 
 # colorize output
