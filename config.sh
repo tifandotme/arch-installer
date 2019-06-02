@@ -29,6 +29,9 @@ sed -i "s/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g" /etc/sudoers
 
 cp /etc/X11/xinit/xinitrc ~/.xinitrc
 
+curl -Os https://raw.githubusercontent.com/ifananvity/dotfiles/master/.bashrc \
+         https://raw.githubusercontent.com/ifananvity/dotfiles/master/.xinitrc
+
 systemctl enable NetworkManager sshd > /dev/null 2>&1
 
 sed -i "s/^#Color/Color/; /#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf

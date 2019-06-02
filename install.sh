@@ -20,7 +20,7 @@ username="anvity"
 userPassword="2"
 
 # root and swap partitions size in GiB, the remainder will be assigned to home partition
-root="5"
+root="3"
 swap="1"
 
 # if running on a virtual machine, VM video driver will be installed, or else
@@ -82,7 +82,7 @@ install() {
     fi
 
     # DE/WM
-    packages="${packages} openbox obmenu obconf nitrogen"
+    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode"
 
     # packages to consider
     # network-manager-applet wireless_tools wpa_supplicant dialog
