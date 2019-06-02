@@ -1,7 +1,8 @@
 #!/bin/sh
-# Arch Linux installation script for UEFI systems
+# Arch Linux installation script
 
 # PARAMETERS
+
 # current timezone
 timezone="Asia/Jakarta"
 
@@ -20,11 +21,10 @@ username="anvity"
 userPassword="2"
 
 # root and swap partitions size in GiB, the remainder will be assigned to home partition
-root="3"
+root="5"
 swap="1"
 
-# if running on a virtual machine, VM video driver will be installed, or else
-# it will install an intel video driver
+# specify whether or not you are running on a virtual machine to determine the video drivers that is going to be installed
 isVM="true"
 
 mirrorlist() {
@@ -42,7 +42,7 @@ partition() {
     echo "Partitioning"
 
     if [ -d /sys/firmware/efi/efivars ]; then
-        # create a GPT partitions on UEFI system
+        # create a GPT partitions for UEFI system
         root=$((root * 1024 + 261))
         swap=$((swap * 1024 + root))
         parted -s /dev/sda mklabel gpt \
@@ -67,7 +67,7 @@ partition() {
         mkswap /dev/sda3 > /dev/null 2>&1
         swapon /dev/sda3 > /dev/null 2>&1
     else
-        # create a MBR partitions on BIOS system
+        # create a MBR partitions for BIOS system
         root=$((root * 1024 + 1))
         swap=$((swap * 1024 + root))
         parted -s /dev/sda mklabel msdos \
@@ -100,17 +100,15 @@ install() {
     # additional package for UEFI system
     [ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
 
+    # video drivers for either VM or intel intergrated graphics
     if ( $isVM ); then
-        # video drivers for virtual machine
         packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils libglvnd mesa"
     else
-        # video drivers for intel graphic card
         packages="${packages} xf86-video-intel libglvnd mesa"
     fi
 
     # general packages
-    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode \
-        firefox"
+    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode"
 
     # packages to consider
     # network-manager-applet wireless_tools wpa_supplicant dialog
@@ -120,7 +118,7 @@ install() {
         n=$((n+1))
         echo "  $pac ($n of $total)"
 
-        pacstrap /mnt "$pac" > /dev/null 2>&1
+        pacstrap /mnt "$pac" > /dev/null
     done
 
     genfstab -U /mnt >> /mnt/etc/fstab
