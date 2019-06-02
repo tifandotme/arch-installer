@@ -17,9 +17,13 @@ tee /etc/hosts <<EOF > /dev/null
 127.0.1.1   $2.localdomain $2
 EOF
 
-# install grub
-grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bootloader-id=GRUB > /dev/null 2>&1
-grub-mkconfig --output=/efi/grub/grub.cfg > /dev/null 2>&1
+if [ -d /sys/firmware/efi/efivars ]; then
+    grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bootloader-id=GRUB > /dev/null 2>&1
+    grub-mkconfig --output=/efi/grub/grub.cfg > /dev/null 2>&1
+else
+    grub-install --target=i386-pc /dev/sda
+    grub-mkconfig --output=/boot/grub/grub.cfg
+fi
 
 # create a new user and allow sudo
 useradd -m -g users -G wheel -s /bin/bash "$4"
