@@ -42,6 +42,7 @@ partition() {
     echo "Partitioning"
 
     if [ -d /sys/firmware/efi/efivars ]; then
+        # create a GPT partitions on UEFI system
         root=$((root * 1024 + 261))
         swap=$((swap * 1024 + root))
         parted -s /dev/sda mklabel gpt \
@@ -66,6 +67,7 @@ partition() {
         mkswap /dev/sda3 > /dev/null 2>&1
         swapon /dev/sda3 > /dev/null 2>&1
     else
+        # create a MBR partitions on BIOS system
         root=$((root * 1024 + 1))
         swap=$((swap * 1024 + root))
         parted -s /dev/sda mklabel msdos \
@@ -95,18 +97,20 @@ install() {
     # base packages
     packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit grub"
 
+    # additional package for UEFI system
     [ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
 
     if ( $isVM ); then
-        # video drivers for VM
+        # video drivers for virtual machine
         packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils libglvnd mesa"
     else
-        # video drivers for intel
+        # video drivers for intel graphic card
         packages="${packages} xf86-video-intel libglvnd mesa"
     fi
 
-    # DE/WM
-    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode"
+    # general packages
+    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode \
+        firefox"
 
     # packages to consider
     # network-manager-applet wireless_tools wpa_supplicant dialog

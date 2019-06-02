@@ -21,8 +21,8 @@ if [ -d /sys/firmware/efi/efivars ]; then
     grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bootloader-id=GRUB > /dev/null 2>&1
     grub-mkconfig --output=/efi/grub/grub.cfg > /dev/null 2>&1
 else
-    grub-install --target=i386-pc /dev/sda
-    grub-mkconfig --output=/boot/grub/grub.cfg
+    grub-install --target=i386-pc /dev/sda > /dev/null 2>&1
+    grub-mkconfig --output=/boot/grub/grub.cfg > /dev/null 2>&1
 fi
 
 # create a new user and allow sudo
