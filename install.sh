@@ -33,7 +33,7 @@ mirrorlist() {
 	curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
 
 	# fetch and ranks a live mirrorlist
-	curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&protocol=https&ip_version=4" | \
+	curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&protocol=http&ip_version=4" | \
 	sed -e "s/^#Server/Server/g; /^#/d" | \
 	bash rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
 }
@@ -96,7 +96,7 @@ install() {
 
 	# base packages
 	packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit xdg-user-dirs grub"
-	[ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr" # additional package for UEFI system
+	[ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
 
 	# video drivers for either VM or intel intergrated graphics
 	if ( $isVM ); then
@@ -116,7 +116,7 @@ install() {
 		n=$((n+1))
 		echo "  $pac ($n of $total)"
 
-		pacstrap /mnt "$pac" > /dev/null
+		pacstrap /mnt "$pac" > /dev/null 2>&1
 	done
 
 	genfstab -U /mnt >> /mnt/etc/fstab
