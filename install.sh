@@ -129,7 +129,7 @@ install() {
 configure() {
 	echo "Configuring"
 
-	curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/master/config.sh -o /mnt/config.sh
+	curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/testing/config.sh -o /mnt/config.sh
 	chmod +x /mnt/config.sh
 	arch-chroot /mnt ./config.sh "$timezone" "$hostname" "$rootPassword" "$username" "$userPassword"
 	rm -f /mnt/config.sh
