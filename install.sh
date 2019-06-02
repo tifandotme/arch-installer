@@ -28,109 +28,107 @@ swap="1"
 isVM="true"
 
 mirrorlist() {
-    echo "Fetching mirrorlist"
+	echo "Fetching mirrorlist"
 
-    curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
+	curl -Os https://raw.githubusercontent.com/ifananvity/arch-installer/master/lib/rankmirrors.sh
 
-    # fetch and ranks a live mirrorlist
-    curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&ip_version=4" | \
-    sed -e "s/^#Server/Server/g; /^#/d" | \
-    bash rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
+	# fetch and ranks a live mirrorlist
+	curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=https&protocol=https&ip_version=4" | \
+	sed -e "s/^#Server/Server/g; /^#/d" | \
+	bash rankmirrors.sh -n 6 - > /etc/pacman.d/mirrorlist
 }
 
 partition() {
-    echo "Partitioning"
+	echo "Partitioning"
 
-    if [ -d /sys/firmware/efi/efivars ]; then
-        # create a GPT partitions for UEFI system
-        root=$((root * 1024 + 261))
-        swap=$((swap * 1024 + root))
-        parted -s /dev/sda mklabel gpt \
-            mkpart efi fat32 1MiB 261MiB \
-            mkpart root ext4 261MiB "$root"MiB \
-            mkpart swap linux-swap "$root"MiB "$swap"MiB \
-            mkpart home ext4 "$swap"MiB 100% \
-            set 1 esp on
+	if [ -d /sys/firmware/efi/efivars ]; then
+		# create a GPT partitions for UEFI system
+		root=$((root * 1024 + 261))
+		swap=$((swap * 1024 + root))
+		parted -s /dev/sda mklabel gpt \
+			mkpart efi fat32 1MiB 261MiB \
+			mkpart root ext4 261MiB "$root"MiB \
+			mkpart swap linux-swap "$root"MiB "$swap"MiB \
+			mkpart home ext4 "$swap"MiB 100% \
+			set 1 esp on
 
-        # formatting
-        mkfs.fat -F32 /dev/sda1 > /dev/null 2>&1
-        mkfs.ext4 -F /dev/sda2 > /dev/null 2>&1
-        mkfs.ext4 -F /dev/sda4 > /dev/null 2>&1
+		# formatting
+		mkfs.fat -F32 /dev/sda1 > /dev/null 2>&1
+		mkfs.ext4 -F /dev/sda2 > /dev/null 2>&1
+		mkfs.ext4 -F /dev/sda4 > /dev/null 2>&1
 
-        # mounting
-        mount /dev/sda2 /mnt > /dev/null 2>&1
-        mkdir /mnt/efi /mnt/home
-        mount /dev/sda1 /mnt/efi > /dev/null 2>&1
-        mount /dev/sda4 /mnt/home > /dev/null 2>&1
+		# mounting
+		mount /dev/sda2 /mnt > /dev/null 2>&1
+		mkdir /mnt/efi /mnt/home
+		mount /dev/sda1 /mnt/efi > /dev/null 2>&1
+		mount /dev/sda4 /mnt/home > /dev/null 2>&1
 
-        # initialize swap partition
-        mkswap /dev/sda3 > /dev/null 2>&1
-        swapon /dev/sda3 > /dev/null 2>&1
-    else
-        # create a MBR partitions for BIOS system
-        root=$((root * 1024 + 1))
-        swap=$((swap * 1024 + root))
-        parted -s /dev/sda mklabel msdos \
-            mkpart primary ext4 1MiB "$root"MiB \
-            mkpart primary linux-swap "$root"MiB "$swap"MiB \
-            mkpart primary ext4 "$swap"MiB 100% \
-            set 1 boot on
+		# initialize swap partition
+		mkswap /dev/sda3 > /dev/null 2>&1
+		swapon /dev/sda3 > /dev/null 2>&1
+	else
+		# create a MBR partitions for BIOS system
+		root=$((root * 1024 + 1))
+		swap=$((swap * 1024 + root))
+		parted -s /dev/sda mklabel msdos \
+			mkpart primary ext4 1MiB "$root"MiB \
+			mkpart primary linux-swap "$root"MiB "$swap"MiB \
+			mkpart primary ext4 "$swap"MiB 100% \
+			set 1 boot on
 
-        # formatting
-        mkfs.ext4 -F /dev/sda1 > /dev/null 2>&1
-        mkfs.ext4 -F /dev/sda3 > /dev/null 2>&1
+		# formatting
+		mkfs.ext4 -F /dev/sda1 > /dev/null 2>&1
+		mkfs.ext4 -F /dev/sda3 > /dev/null 2>&1
 
-        # mounting
-        mount /dev/sda1 /mnt > /dev/null 2>&1
-        mkdir /mnt/home
-        mount /dev/sda3 /mnt/home > /dev/null 2>&1
+		# mounting
+		mount /dev/sda1 /mnt > /dev/null 2>&1
+		mkdir /mnt/home
+		mount /dev/sda3 /mnt/home > /dev/null 2>&1
 
-        # initialize swap partition
-        mkswap /dev/sda2 > /dev/null 2>&1
-        swapon /dev/sda2 > /dev/null 2>&1
-    fi
+		# initialize swap partition
+		mkswap /dev/sda2 > /dev/null 2>&1
+		swapon /dev/sda2 > /dev/null 2>&1
+	fi
 }
 
 install() {
-    echo "Installing packages"
+	echo "Installing packages"
 
-    # base packages
-    packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit grub"
+	# base packages
+	packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit xdg-user-dirs grub"
+	[ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr" # additional package for UEFI system
 
-    # additional package for UEFI system
-    [ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
+	# video drivers for either VM or intel intergrated graphics
+	if ( $isVM ); then
+		packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils"
+	else
+		packages="${packages} xf86-video-intel"
+	fi
 
-    # video drivers for either VM or intel intergrated graphics
-    if ( $isVM ); then
-        packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils libglvnd mesa"
-    else
-        packages="${packages} xf86-video-intel libglvnd mesa"
-    fi
+	# general packages
+	packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode git"
 
-    # general packages
-    packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode"
+	# packages to consider
+	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet wireless_tools wpa_supplicant dialog
 
-    # packages to consider
-    # network-manager-applet wireless_tools wpa_supplicant dialog
+	total=$(echo "$packages" | wc -w)
+	for pac in $packages; do
+		n=$((n+1))
+		echo "  $pac ($n of $total)"
 
-    total=$(echo "$packages" | wc -w)
-    for pac in $packages; do
-        n=$((n+1))
-        echo "  $pac ($n of $total)"
+		pacstrap /mnt "$pac" > /dev/null
+	done
 
-        pacstrap /mnt "$pac" > /dev/null
-    done
-
-    genfstab -U /mnt >> /mnt/etc/fstab
+	genfstab -U /mnt >> /mnt/etc/fstab
 }
 
 configure() {
-    echo "Configuring"
+	echo "Configuring"
 
-    curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/master/config.sh -o /mnt/config.sh
-    chmod +x /mnt/config.sh
-    arch-chroot /mnt ./config.sh "$timezone" "$hostname" "$rootPassword" "$username" "$userPassword"
-    rm -f /mnt/config.sh
+	curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/master/config.sh -o /mnt/config.sh
+	chmod +x /mnt/config.sh
+	arch-chroot /mnt ./config.sh "$timezone" "$hostname" "$rootPassword" "$username" "$userPassword"
+	rm -f /mnt/config.sh
 }
 
 # MAIN
