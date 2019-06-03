@@ -39,7 +39,7 @@ find /home/"$4"/ -mindepth 1 -delete
 git clone -q https://github.com/ifananvity/dotfiles.git
 mv -f dotfiles/.* -t /home/"$4"/ > /dev/null 2>&1
 rm -rf dotfiles/
-chown -R "$4":users
+chown -R "$4":users /home/"$4"/
 
 # colorize output
 sed -i "s/^#Color/Color/g; /#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
