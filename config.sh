@@ -41,6 +41,12 @@ mv -f dotfiles/.* -t /home/"$4"/ > /dev/null 2>&1
 rm -rf dotfiles/
 chown -R "$4":users /home/"$4"/
 
+# disable xdg-user-dirs-update on login so it doesn't overwrite per-user config from the dotfiles
+sed -i "s/enabled=True/enabled=False/g" /etc/xdg/user-dirs.conf
+
+# make user directories
+mkdir -p /home/$4/{downloads,documents,media/music,media/pictures,media/videos}
+
 # colorize output
 sed -i "s/^#Color/Color/g; /#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 
