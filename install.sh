@@ -98,7 +98,7 @@ install() {
 	echo "Installing packages"
 
 	# base packages
-	packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools os-prober xorg-server xorg-xinit xdg-user-dirs grub"
+	packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools xorg-server xorg-xinit xdg-user-dirs grub"
 	[ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
 
 	# video drivers for either VM or intel intergrated graphics
@@ -109,10 +109,11 @@ install() {
 	fi
 
 	# general packages
-	packages="${packages} openbox obmenu obconf tint2 nitrogen rxvt-unicode \
-		git htop"
+	packages="${packages} openbox obmenu tint2 rxvt-unicode \
+		git htop neofetch"
 
 	# packages to consider
+	# leafpad pcmanfm nitrogen obconf os-prober
 	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet wireless_tools wpa_supplicant dialog
 
 	total=$(echo "$packages" | wc -w)
