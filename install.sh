@@ -109,11 +109,10 @@ install() {
 	fi
 
 	# general packages
-	packages="${packages} openbox obmenu tint2 rxvt-unicode \
-		git htop neofetch"
+	packages="${packages} openbox tint2 rxvt-unicode git htop neofetch"
 
 	# packages to consider
-	# leafpad pcmanfm nitrogen obconf os-prober
+	# leafpad pcmanfm nitrogen obconf obmenos-prober
 	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet wireless_tools wpa_supplicant dialog
 
 	total=$(echo "$packages" | wc -w)
