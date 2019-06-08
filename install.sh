@@ -1,6 +1,6 @@
 #!/bin/sh
 # Arch Linux installation script
-
+#
 # curl https://tinyurl.com/rifqid > in
 # bash in
 
@@ -24,11 +24,11 @@ username="anvity"
 userPassword="2"
 
 # root and swap partitions size in GiB, the remainder will be assigned to home partition
-root="5"
-swap="1"
+root="20"
+swap="4"
 
 # specify whether or not you are running on a virtual machine to determine the video drivers that is going to be installed
-isVM="true"
+isVM="false"
 
 mirrorlist() {
 	echo "Fetching mirrorlist"
@@ -98,22 +98,22 @@ install() {
 	echo "Installing packages"
 
 	# base packages
-	packages="base base-devel intel-ucode linux-headers networkmanager openssh dosfstools mtools xorg-server xorg-xinit xdg-user-dirs grub"
+	packages="base base-devel intel-ucode linux-headers dosfstools mtools xorg-server xorg-xinit xdg-user-dirs grub"
 	[ -d /sys/firmware/efi/efivars ] && packages="${packages} efibootmgr"
 
 	# video drivers for either VM or intel intergrated graphics
 	if ( $isVM ); then
 		packages="${packages} xf86-video-vmware virtualbox-guest-modules-arch virtualbox-guest-utils"
 	else
-		packages="${packages} xf86-video-intel"
+		packages="${packages} xf86-video-intel xf86-video-nouveau"
 	fi
 
 	# general packages
-	packages="${packages} openbox tint2 rxvt-unicode git htop neofetch"
+	packages="${packages} openbox tint2 rxvt-unicode ttf-hack ttf-liberation pulseaudio pulsemixer networkmanager openssh git htop neofetch cmatrix vim ranger firefox" 
 
 	# packages to consider
-	# leafpad pcmanfm nitrogen obconf obmenos-prober
-	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet wireless_tools wpa_supplicant dialog
+	# leafpad pcmanfm nitrogen obconf obmenu os-prober
+	# libglvnd(included in mesa), mesa(included in xorg-server), network-manager-applet(networkmanager already includes nmcli and nmtui to manage connections), wpa_supplicant(included in networkmanager) dialog, wireless_tools
 
 	total=$(echo "$packages" | wc -w)
 	for pac in $packages; do
@@ -129,7 +129,7 @@ install() {
 configure() {
 	echo "Configuring"
 
-	curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/testing/config.sh -o /mnt/config.sh
+	curl -s https://raw.githubusercontent.com/ifananvity/arch-installer/master/config.sh -o /mnt/config.sh
 	chmod +x /mnt/config.sh
 	arch-chroot /mnt ./config.sh "$timezone" "$hostname" "$rootPassword" "$username" "$userPassword"
 	rm -f /mnt/config.sh
