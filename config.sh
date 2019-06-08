@@ -32,7 +32,7 @@ fi
 useradd -m -g users -G wheel -s /bin/bash "$4"
 echo "$4:$5" | chpasswd
 echo "root:$3" | chpasswd
-sed -i "s/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL= NOPASSWD: ALL, NOPASSWD: \/usr\/bin\/halt, \/usr\/bin\/poweroff, \/usr\/bin\/reboot, \/usr\/bin\/pacman -Syu, \/usr\/bin\/pacman -Syyu, \/usr\/bin\/pacman -Sy, \/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
+sed -i "s/^# %wheel ALL=(ALL), NOPASSWD: ALL/%wheel ALL=(ALL) ALL, NOPASSWD: \/usr\/bin\/halt, \/usr\/bin\/poweroff, \/usr\/bin\/reboot, \/usr\/bin\/pacman -Syu, \/usr\/bin\/pacman -Syyu, \/usr\/bin\/pacman -Sy, \/usr\/bin\/pacman -Syy/g; /without a password/a Defaults \!tty_tickets" /etc/sudoers
 
 # disable xdg-user-dirs-update on login so it doesn't overwrite user-spesific config from the dotfiles
 sed -i "s/enabled=True/enabled=False/g" /etc/xdg/user-dirs.conf
@@ -62,4 +62,4 @@ chown -R "$4":users /home/"$4"/
 mkdir -p /home/$4/{Downloads,Documents,Media/Music,Media/Pictures,Media/Videos}
 
 # start these services at startup
-systemctl enable NetworkManager > /dev/null 2>&1
+systemctl enable NetworkManager dhcpcd> /dev/null 2>&1
