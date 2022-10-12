@@ -3,4 +3,5 @@
 #
 
 curl -s "https://archlinux.org/mirrorlist/?country=ID&protocol=https&ip_version=4&use_mirror_status=on" | \
-sed -n "s/#Server/Server/pg; /Generated/p"
+sed -n "s/#Server/Server/pg; /Generated/p" | \
+rankmirrors -n 6 > /etc/pacman.d/mirrorlist
